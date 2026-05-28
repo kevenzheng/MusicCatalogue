@@ -1,9 +1,18 @@
-/* Dashboard Grid Layout */
+/* Dashboard Grid Layout - Positioned in one single line */
 .dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 25px;
+    /* Explicitly enforces exactly 4 equal-width columns in one line */
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 20px;
     margin-top: 40px;
+    width: 100%;
+}
+
+/* Keeps them in one line on desktop, but lets them stack neatly on mobile screens */
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Clickable Card Styling */
