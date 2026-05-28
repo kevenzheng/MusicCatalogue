@@ -34,19 +34,28 @@
                 </tr>
             </thead>
             <tbody id="catalogue-body">
-                <% songs.forEach(song => { %>
-                    <tr data-song="<%= song.song %>" data-artist="<%= song.artist %>" data-date="<%= song.dateAdded %>">
-                        <td><%= song.artist %></td>
-                        <td><%= song.song %></td>
-                        <td><%= song.album %></td>
-                        <td>
-                            <a href="#" onclick="openViewModal('<%= song.song %>', '<%= song.artist %>', '<%= song.album %>')">View</a> | 
-                            <a href="#" onclick="openEditModal('<%= song.id %>', '<%= song.song %>', '<%= song.artist %>', '<%= song.album %>')">edit</a> | 
-                            <a href="/songs/delete/<%= song.id %>" onclick="return confirm('Are you sure you want to delete this song?')">delete</a>
-                        </td>
-                    </tr>
-                <% }) %>
-            </tbody>
+    <% songs.forEach(song => { %>
+        <tr data-song="<%= song.song %>" data-artist="<%= song.artist %>" data-date="<%= song.dateAdded %>">
+            <td><%= song.artist %></td>
+            <td><%= song.song %></td>
+            <td><%= song.album %></td>
+            <td>
+                <a href="#" class="action-btn view-btn" 
+                   data-song="<%= song.song %>" 
+                   data-artist="<%= song.artist %>" 
+                   data-album="<%= song.album %>">View</a> | 
+                
+                <a href="#" class="action-btn edit-btn" 
+                   data-id="<%= song.id %>"
+                   data-song="<%= song.song %>" 
+                   data-artist="<%= song.artist %>" 
+                   data-album="<%= song.album %>">edit</a> | 
+                
+                <a href="/songs/delete/<%= song.id %>" onclick="return confirm('Are you sure you want to delete this song?')">delete</a>
+            </td>
+        </tr>
+    <% }) %>
+</tbody>
         </table>
     </div>
 
@@ -99,52 +108,70 @@
 </div>
 
     <script>
-        // --- Sorting Functionality ---
-        function sortData(type) {
-            const tbody = document.getElementById('catalogue-body');
-            const rows = Array.from(tbody.querySelectorAll('tr'));
+    // --- Sorting Functionality ---
+    function sortData(type) {
+        const tbody = document.getElementById('catalogue-body');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
 
-            rows.sort((a, b) => {
-                if (type === 'song') return a.dataset.song.localeCompare(b.dataset.song);
-                if (type === 'artist') return a.dataset.artist.localeCompare(b.dataset.artist);
-                if (type === 'recent') return new Date(b.dataset.date) - new Date(a.dataset.date);
+        rows.sort((a, b) => {
+            if (type === 'song') return a.dataset.song.localeCompare(b.dataset.song);
+            if (type === 'artist') return a.dataset.artist.localeCompare(b.dataset.artist);
+            if (type === 'recent') return new Date(b.dataset.date) - new Date(a.dataset.date);
+        });
+        rows.forEach(row => tbody.appendChild(row));
+    }
+
+    // --- Dynamic Event Handlers for Action Links ---
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        // 1. Handle Click on "View" links
+        document.querySelectorAll('.view-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const dataset = button.dataset;
+                
+                document.getElementById('view-song').innerText = dataset.song;
+                document.getElementById('view-artist').innerText = dataset.artist;
+                document.getElementById('view-album').innerText = dataset.album;
+                document.getElementById('viewModal').style.display = 'block';
             });
-            rows.forEach(row => tbody.appendChild(row));
-        }
+        });
 
-        // --- Add Action ---
-        function openAddModal() {
-            document.getElementById('addModal').style.display = 'block';
-        }
+        // 2. Handle Click on "edit" links
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const dataset = button.dataset;
+                
+                // Point form destination URL to the specific item ID
+                document.getElementById('editForm').action = `/songs/edit/${dataset.id}`;
+                
+                // Assign current values directly to form input elements safely
+                document.getElementById('edit-artist').value = dataset.artist;
+                document.getElementById('edit-song').value = dataset.song;
+                document.getElementById('edit-album').value = dataset.album;
+                
+                document.getElementById('editModal').style.display = 'block';
+            });
+        });
+    });
 
-        // --- View Action ---
-        function openViewModal(song, artist, album) {
-            document.getElementById('view-song').innerText = song;
-            document.getElementById('view-artist').innerText = artist;
-            document.getElementById('view-album').innerText = album;
-            document.getElementById('viewModal').style.display = 'block';
-        }
+    // --- Add Action Modal Trigger ---
+    function openAddModal() {
+        document.getElementById('addModal').style.display = 'block';
+    }
 
-        // --- Edit Action ---
-        function openEditModal(id, song, artist, album) {
-            document.getElementById('editForm').action = `/songs/edit/${id}`;
-            document.getElementById('edit-song').value = song;
-            document.getElementById('edit-artist').value = artist;
-            document.getElementById('edit-album').value = album;
-            document.getElementById('editModal').style.display = 'block';
-        }
+    // --- Universal Modal Closer ---
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
 
-        // --- Universal Modal Closer ---
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
+    // Close modal if user clicks outside of the box container
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
         }
-
-        // Close modal if user clicks outside of the box container
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = 'none';
-            }
-        }
-    </script>
+    }
+</script>
 </body>
 </html>
