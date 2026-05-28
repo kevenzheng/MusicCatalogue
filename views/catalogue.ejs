@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Catalogue</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <%- include('partials/navbar') %>
+
+    <div class="container">
+        <h2>CATALOGUE</h2>
+        
+        <div style="margin-bottom: 20px; text-align: right;">
+            <button onclick="openAddModal()" style="padding: 10px 15px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                + Add New Song
+            </button>
+        </div>
+
+        <div class="sort-buttons">
+            <strong>SORT:</strong>
+            <button onclick="sortData('song')">SONG (A-Z)</button>
+            <button onclick="sortData('artist')">ARTIST (A-Z)</button>
+            <button onclick="sortData('recent')">RECENTLY ADDED</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Artist name</th>
+                    <th>Song</th>
+                    <th>Album</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="catalogue-body">
+                <% songs.forEach(song => { %>
+                    <tr data-song="<%= song.song %>" data-artist="<%= song.artist %>" data-date="<%= song.dateAdded %>">
+                        <td><%= song.artist %></td>
+                        <td><%= song.song %></td>
+                        <td><%= song.album %></td>
+                        <td>
+                            <a href="#" onclick="openViewModal('<%= song.song %>', '<%= song.artist %>', '<%= song.album %>')">View</a> | 
+                            <a href="#" onclick="openEditModal('<%= song.id %>', '<%= song.song %>', '<%= song.artist %>', '<%= song.album %>')">edit</a> | 
+                            <a href="/songs/delete/<%= song.id %>" onclick="return confirm('Are you sure you want to delete this song?')">delete</a>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('addModal')">&times;</span>
+            <h3>Add a New Track</h3>
+            <form action="/songs/add" method="POST">
+                <label for="add-artist">Artist's Name:</label>
+                <input type="text" id="add-artist" name="artist" placeholder="e.g., Post Malone" required>
+                
+                <label for="add-song">Song Name:</label>
+                <input type="text" id="add-song" name="song" placeholder="e.g., Sunflower" required>
+                
+                <label for="add-album">Album:</label>
+                <input type="text" id="add-album" name="album" placeholder="e.g., Spider-Man: Into the Spider-Verse" required>
+                
+                <button type="submit" class="btn-submit" style="background-color: #28a745;">Add Track</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('viewModal')">&times;</span>
+            <h3 id="view-title">Song Details</h3>
+            <p><strong>Song Title:</strong> <span id="view-song"></span></p>
+            <p><strong>Artist:</strong> <span id="view-artist"></span></p>
+            <p><strong>Album:</strong> <span id="view-album"></span></p>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('editModal')">&times;</span>
+            <h3>Edit Song Info</h3>
+            <form id="editForm" method="POST" action="">
+                <label for="edit-artist">Artist Name:</label>
+                <input type="text" id="edit-artist" name="artist" required>
+
+                <label for="edit-song">Song Title:</label>
+                <input type="text" id="edit-song" name="song" required>
+                
+                <label for="edit-album">Album:</label>
+                <input type="text" id="edit-album" name="album" required>
+                
+                <button type="submit" class="btn-submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- Sorting Functionality ---
+        function sortData(type) {
+            const tbody = document.getElementById('catalogue-body');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+            rows.sort((a, b) => {
+                if (type === 'song') return a.dataset.song.localeCompare(b.dataset.song);
+                if (type === 'artist') return a.dataset.artist.localeCompare(b.dataset.artist);
+                if (type === 'recent') return new Date(b.dataset.date) - new Date(a.dataset.date);
+            });
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        // --- Add Action ---
+        function openAddModal() {
+            document.getElementById('addModal').style.display = 'block';
+        }
+
+        // --- View Action ---
+        function openViewModal(song, artist, album) {
+            document.getElementById('view-song').innerText = song;
+            document.getElementById('view-artist').innerText = artist;
+            document.getElementById('view-album').innerText = album;
+            document.getElementById('viewModal').style.display = 'block';
+        }
+
+        // --- Edit Action ---
+        function openEditModal(id, song, artist, album) {
+            document.getElementById('editForm').action = `/songs/edit/${id}`;
+            document.getElementById('edit-song').value = song;
+            document.getElementById('edit-artist').value = artist;
+            document.getElementById('edit-album').value = album;
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        // --- Universal Modal Closer ---
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Close modal if user clicks outside of the box container
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

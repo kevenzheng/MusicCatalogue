@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Music Tracker Dashboard</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <%- include('partials/navbar') %>
+
+    <div
+      class="container"
+      style="max-width: 900px; background: transparent; box-shadow: none"
+    >
+      <header style="text-align: center; margin-bottom: 20px">
+        <h1 style="color: #222; font-size: 2.5rem; margin-bottom: 10px">
+          Music App Hub
+        </h1>
+        <p style="color: #666; font-size: 1.1rem">
+          Select a workspace section below to manage your collection.
+        </p>
+      </header>
+
+      <div class="dashboard-grid">
+        <a href="/catalogue" class="menu-card">
+          <div class="icon">📁</div>
+          <h3>CATALOGUE</h3>
+          <p>
+            View, add, edit, and sort through your entire music database tracker
+            seamlessly.
+          </p>
+        </a>
+
+        <a href="/randomizer" class="menu-card">
+          <div class="icon">🔀</div>
+          <h3>RANDOMIZER</h3>
+          <p>
+            Can't decide what to listen to? Let the system select a random track
+            configuration.
+          </p>
+        </a>
+
+        <a href="/search" class="menu-card">
+          <div class="icon">🔍</div>
+          <h3>SEARCH</h3>
+          <p>
+            Query records dynamically across multiple specific filter parameter
+            sets.
+          </p>
+        </a>
+
+        <a href="/about" class="menu-card">
+          <div class="icon">ℹ️</div>
+          <h3>ABOUT</h3>
+          <p>
+            Read background metrics description updates regarding this
+            architecture layout setup.
+          </p>
+        </a>
+      </div>
+    </div>
+  </body>
+</html>

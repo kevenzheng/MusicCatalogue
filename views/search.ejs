@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <%- include('partials/navbar') %>
+
+    <div class="container">
+        <h2>SEARCH</h2>
+        <div class="search-box">
+            <select id="search-type">
+                <option value="song">Search by Song Name</option>
+                <option value="artist">Search by Artist Name</option>
+                <option value="album">Search by Album Name</option>
+            </select>
+            <br>
+            <input type="text" id="search-input" onkeyup="filterSongs()" placeholder="Enter details to query...">
+        </div>
+
+        <h3 style="margin-top: 20px;">Results</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Artist name</th>
+                    <th>Song</th>
+                    <th>Album</th>
+                </tr>
+            </thead>
+            <tbody id="results-body">
+                <% songs.forEach(song => { %>
+                    <tr class="search-row" data-song="<%= song.song.toLowerCase() %>" data-artist="<%= song.artist.toLowerCase() %>" data-album="<%= song.album.toLowerCase() %>">
+                        <td><%= song.artist %></td>
+                        <td><%= song.song %></td>
+                        <td><%= song.album %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function filterSongs() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const type = document.getElementById('search-type').value;
+            const rows = document.querySelectorAll('.search-row');
+
+            rows.forEach(row => {
+                const targetValue = row.getAttribute(`data-${type}`);
+                if (targetValue.includes(query)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+    </script>
+</body>
+</html>

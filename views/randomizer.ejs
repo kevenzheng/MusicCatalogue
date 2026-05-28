@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Randomizer</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <%- include('partials/navbar') %>
+
+    <div
+      class="container"
+      id="random-container"
+      data-songs="<%= JSON.stringify(songs) %>"
+    >
+      <h2>RANDOMIZER</h2>
+
+      <button
+        onclick="pickRandomSong()"
+        style="
+          padding: 10px 20px;
+          margin-bottom: 20px;
+          cursor: pointer;
+          background-color: #007bff;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          font-weight: bold;
+        "
+      >
+        Get Random Song
+      </button>
+
+      <div class="card" id="random-display">
+        <p style="color: #777">
+          Click the button above to generate random song details.
+        </p>
+      </div>
+    </div>
+
+    <script>
+      function pickRandomSong() {
+        const container = document.getElementById("random-container");
+        const display = document.getElementById("random-display");
+
+        // Extract and parse the songs from the HTML data attribute
+        const songsList = JSON.parse(container.dataset.songs);
+
+        // Safety check in case the array is empty
+        if (!songsList || songsList.length === 0) {
+          display.innerHTML = `<p style="color: red;">No songs found in your library!</p>`;
+          return;
+        }
+
+        // Pick a truly random item from the list
+        const randomIndex = Math.floor(Math.random() * songsList.length);
+        const randomSong = songsList[randomIndex];
+
+        // Inject the selected track dynamically into the card layout
+        display.innerHTML = `
+                <h3 style="font-size: 1.5rem; margin-bottom: 10px;">🎵 ${randomSong.song}</h3>
+                <p style="margin: 5px 0;"><strong>Artist:</strong> ${randomSong.artist}</p>
+                <p style="margin: 5px 0;"><strong>Album:</strong> ${randomSong.album}</p>
+            `;
+      }
+    </script>
+  </body>
+</html>
