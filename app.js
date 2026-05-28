@@ -27,7 +27,7 @@ app.get('/about', (req, res) => res.render('about'));
 // ACTION: Edit Song (Update)
 app.post('/songs/edit/:id', (req, res) => {
     const id = parseInt(req.params.id);
-    const { artist, song, album } = req.body;
+    const { artist, song, album } = req.body; // These must match the 'name' attributes in your HTML form!
     
     songs = songs.map(s => s.id === id ? { ...s, artist, song, album } : s);
     res.redirect('/catalogue');
